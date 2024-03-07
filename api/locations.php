@@ -17,6 +17,10 @@ if ($result->num_rows > 0) {
             "localname" => $row['localname'],
             "latitude" => $row['latitude'],
             "longitude" => $row['longitude'],
+            "description" => $row['description'],
+            "email" => $row['email'],
+            "phone" => $row['phone'],
+            "category" => $row['category'],
             "created_at" => $row['created_at']
         );
         $locations[] = $location;
