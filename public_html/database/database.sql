@@ -40,6 +40,33 @@ INSERT INTO `categories` VALUES (1,'Electrónica');
 UNLOCK TABLES;
 
 --
+-- Table structure for table `clients`
+--
+
+DROP TABLE IF EXISTS `clients`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `clients` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) COLLATE utf8mb3_bin DEFAULT NULL,
+  `phone` varchar(20) COLLATE utf8mb3_bin DEFAULT NULL,
+  `email` varchar(100) COLLATE utf8mb3_bin DEFAULT NULL,
+  `num_doc` varchar(45) COLLATE utf8mb3_bin DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `clients`
+--
+
+LOCK TABLES `clients` WRITE;
+/*!40000 ALTER TABLE `clients` DISABLE KEYS */;
+INSERT INTO `clients` VALUES (1,'Pedro Siccha','910832955','pedro.d.siccha@gmail.com','12345678');
+/*!40000 ALTER TABLE `clients` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `locations`
 --
 
@@ -56,6 +83,7 @@ CREATE TABLE `locations` (
   `email` varchar(100) COLLATE utf8mb3_bin DEFAULT NULL,
   `phone` varchar(100) COLLATE utf8mb3_bin DEFAULT NULL,
   `category` varchar(45) COLLATE utf8mb3_bin DEFAULT NULL,
+  `status` varchar(45) COLLATE utf8mb3_bin DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -66,7 +94,7 @@ CREATE TABLE `locations` (
 
 LOCK TABLES `locations` WRITE;
 /*!40000 ALTER TABLE `locations` DISABLE KEYS */;
-INSERT INTO `locations` VALUES (1,'Local 1','-9.223612','-77.6855180','2024-02-29 14:53:44',NULL,NULL,NULL,NULL),(2,'Local 2','-9.224941','-77.688457','2024-02-29 14:53:44',NULL,NULL,NULL,NULL),(3,'Local 3','-9.222564','-77.687502','2024-02-29 14:53:44',NULL,NULL,NULL,NULL),(5,'Tigua','-9.222156','-77.685518','2024-02-29 16:21:38',NULL,NULL,NULL,NULL);
+INSERT INTO `locations` VALUES (1,'Local 1','-9.223612','-77.6855180','2024-02-29 14:53:44',NULL,NULL,NULL,NULL,'PENDIENTE'),(2,'Local 2','-9.224941','-77.688457','2024-02-29 14:53:44',NULL,NULL,NULL,NULL,'PENDIENTE'),(3,'Local 3','-9.222564','-77.687502','2024-02-29 14:53:44',NULL,NULL,NULL,NULL,'ENTREGADO'),(5,'Tigua','-9.222156','-77.685518','2024-02-29 16:21:38',NULL,NULL,NULL,NULL,'ENTREGADO');
 /*!40000 ALTER TABLE `locations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -83,12 +111,15 @@ CREATE TABLE `order_details` (
   `product_id` int DEFAULT NULL,
   `quantity` int NOT NULL,
   `price` decimal(10,2) NOT NULL,
+  `unit_id` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `order_id` (`order_id`),
   KEY `product_id` (`product_id`),
+  KEY `unit_id` (`unit_id`),
   CONSTRAINT `order_details_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`),
-  CONSTRAINT `order_details_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
+  CONSTRAINT `order_details_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`),
+  CONSTRAINT `order_details_ibfk_3` FOREIGN KEY (`unit_id`) REFERENCES `units` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -97,6 +128,7 @@ CREATE TABLE `order_details` (
 
 LOCK TABLES `order_details` WRITE;
 /*!40000 ALTER TABLE `order_details` DISABLE KEYS */;
+INSERT INTO `order_details` VALUES (1,2,1,2,25.00,NULL),(2,2,2,1,50.00,NULL);
 /*!40000 ALTER TABLE `order_details` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -113,10 +145,13 @@ CREATE TABLE `orders` (
   `order_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `status` enum('pending','completed','cancelled') COLLATE utf8mb3_bin DEFAULT 'pending',
   `total_amount` decimal(10,2) NOT NULL,
+  `client_id` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
+  KEY `fk_client_id` (`client_id`),
+  CONSTRAINT `fk_client_id` FOREIGN KEY (`client_id`) REFERENCES `clients` (`id`),
   CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -125,6 +160,7 @@ CREATE TABLE `orders` (
 
 LOCK TABLES `orders` WRITE;
 /*!40000 ALTER TABLE `orders` DISABLE KEYS */;
+INSERT INTO `orders` VALUES (1,1,'2024-03-31 05:51:58','pending',100.00,1),(2,1,'2024-03-31 05:53:26','pending',100.00,1);
 /*!40000 ALTER TABLE `orders` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -145,7 +181,7 @@ CREATE TABLE `products` (
   PRIMARY KEY (`id`),
   KEY `category_id` (`category_id`),
   CONSTRAINT `products_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -154,7 +190,31 @@ CREATE TABLE `products` (
 
 LOCK TABLES `products` WRITE;
 /*!40000 ALTER TABLE `products` DISABLE KEYS */;
+INSERT INTO `products` VALUES (1,'xoxo','Producto de prueba',1.50,100,1),(2,'toto','pr',2.00,100,1);
 /*!40000 ALTER TABLE `products` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `units`
+--
+
+DROP TABLE IF EXISTS `units`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `units` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) COLLATE utf8mb3_bin DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `units`
+--
+
+LOCK TABLES `units` WRITE;
+/*!40000 ALTER TABLE `units` DISABLE KEYS */;
+/*!40000 ALTER TABLE `units` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -192,4 +252,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-03-06 19:26:08
+-- Dump completed on 2024-04-01 11:05:20

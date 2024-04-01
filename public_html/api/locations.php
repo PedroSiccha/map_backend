@@ -21,6 +21,7 @@ if ($result->num_rows > 0) {
             "email" => $row['email'],
             "phone" => $row['phone'],
             "category" => $row['category'],
+            "status" => $row['status'],
             "created_at" => $row['created_at']
         );
         $locations[] = $location;
