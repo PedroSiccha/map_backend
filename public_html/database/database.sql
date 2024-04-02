@@ -111,14 +111,11 @@ CREATE TABLE `order_details` (
   `product_id` int DEFAULT NULL,
   `quantity` int NOT NULL,
   `price` decimal(10,2) NOT NULL,
-  `unit_id` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `order_id` (`order_id`),
   KEY `product_id` (`product_id`),
-  KEY `unit_id` (`unit_id`),
   CONSTRAINT `order_details_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`),
-  CONSTRAINT `order_details_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`),
-  CONSTRAINT `order_details_ibfk_3` FOREIGN KEY (`unit_id`) REFERENCES `units` (`id`)
+  CONSTRAINT `order_details_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -128,7 +125,7 @@ CREATE TABLE `order_details` (
 
 LOCK TABLES `order_details` WRITE;
 /*!40000 ALTER TABLE `order_details` DISABLE KEYS */;
-INSERT INTO `order_details` VALUES (1,2,1,2,25.00,NULL),(2,2,2,1,50.00,NULL);
+INSERT INTO `order_details` VALUES (1,2,1,2,25.00),(2,2,2,1,50.00);
 /*!40000 ALTER TABLE `order_details` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -162,6 +159,33 @@ LOCK TABLES `orders` WRITE;
 /*!40000 ALTER TABLE `orders` DISABLE KEYS */;
 INSERT INTO `orders` VALUES (1,1,'2024-03-31 05:51:58','pending',100.00,1),(2,1,'2024-03-31 05:53:26','pending',100.00,1);
 /*!40000 ALTER TABLE `orders` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `product_units`
+--
+
+DROP TABLE IF EXISTS `product_units`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `product_units` (
+  `product_id` int NOT NULL,
+  `unit_id` int NOT NULL,
+  PRIMARY KEY (`product_id`,`unit_id`),
+  KEY `unit_id` (`unit_id`),
+  CONSTRAINT `product_units_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`),
+  CONSTRAINT `product_units_ibfk_2` FOREIGN KEY (`unit_id`) REFERENCES `units` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `product_units`
+--
+
+LOCK TABLES `product_units` WRITE;
+/*!40000 ALTER TABLE `product_units` DISABLE KEYS */;
+INSERT INTO `product_units` VALUES (1,1),(1,2),(2,2),(2,3);
+/*!40000 ALTER TABLE `product_units` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -205,7 +229,7 @@ CREATE TABLE `units` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(50) COLLATE utf8mb3_bin DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -214,6 +238,7 @@ CREATE TABLE `units` (
 
 LOCK TABLES `units` WRITE;
 /*!40000 ALTER TABLE `units` DISABLE KEYS */;
+INSERT INTO `units` VALUES (1,'UND'),(2,'DOC'),(3,'KG');
 /*!40000 ALTER TABLE `units` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -252,4 +277,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-01 11:05:20
+-- Dump completed on 2024-04-01 22:53:04
